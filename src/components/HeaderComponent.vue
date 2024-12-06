@@ -1,12 +1,18 @@
 <template>
   <header class="header">
-    <div v-if="isLoggedIn" class="character-info">
-      <span>{{ characterName }}</span>
-      <img :src="characterPortraitUrl" alt="Character Portrait" class="character-portrait" />
+    <div class="left-section">
+      <button v-if="showBackButton" @click="goBack" class="back-button">Back</button>
     </div>
-    <SSOLogin v-else />
+    <div class="right-section">
+      <div v-if="isLoggedIn" class="character-info">
+        <span>{{ characterName }}</span>
+        <img :src="characterPortraitUrl" alt="Character Portrait" class="character-portrait" />
+      </div>
+      <SSOLogin v-else />
+    </div>
   </header>
 </template>
+
 
 <script>
 import SSOLogin from './SSOLogin.vue';
@@ -16,6 +22,12 @@ export default {
   components: {
     SSOLogin,
   },
+  props: {
+    showBackButton: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       characterName: null,
@@ -23,6 +35,9 @@ export default {
     };
   },
   computed: {
+    goBack() {
+      return this.$emit("back-to-list");
+    },
     isLoggedIn() {
       return this.characterName && this.characterId;
     },
@@ -58,24 +73,44 @@ export default {
 .header {
   padding: 20px;
   width: 100%;
-  text-align: center;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: space-between;
+}
+
+.left-section {
+  flex: 0 1 auto;
+}
+
+.right-section {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .character-info {
   display: flex;
   align-items: center;
-  gap: 10px;
   color: #c2a611;
   font-size: 25px;
   font-weight: bold;
+  gap: 10px;
 }
 
-
-.character-portrait {  height: 40px;
+.character-portrait {
+  height: 40px;
   border-radius: 50%;
   margin-right: 20px;
+}
+
+.back-button {
+  padding: 5px 10px;
+  background-color: #c2a611;
+  color: #2c3e50;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 30px;
 }
 </style>

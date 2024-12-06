@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <BackgroundLogo />
-    <HeaderComponent />
+    <HeaderComponent
+        :show-back-button="showProjectDetails"
+        @back-to-list="showList"/>
     <ProjectList v-if="isLoggedIn && !showProjectDetails" @view-project-details="showDetails" />
     <ProjectDetails v-if="isLoggedIn && showProjectDetails" :project="selectedProject" />
   </div>
@@ -41,6 +43,10 @@ export default {
     }
   },
   methods: {
+    showList() {
+      this.showProjectDetails = false;
+      this.selectedProject = null;
+    },
     getCookie(name) {
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
@@ -49,10 +55,6 @@ export default {
     showDetails(project) {
       this.selectedProject = project;
       this.showProjectDetails = true;
-    },
-    goBackToProjectList() {
-      this.showProjectDetails = false;
-      this.selectedProject = null;
     },
   },
 };
@@ -74,7 +76,8 @@ export default {
   align-items: center;
   margin: 0;
   padding: 0;
-  //overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
   box-sizing: border-box;
 }
 

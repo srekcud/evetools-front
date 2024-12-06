@@ -1,6 +1,6 @@
 <template>
   <div class="project-details">
-    <h2>Détails du projet: {{ project.name }}</h2>
+    <h2>Détails du projet : {{ project.name }}</h2>
     <div class="tabs">
       <button
           v-for="(type, tabName) in tabs"
@@ -69,6 +69,15 @@ export default {
           this.totalItems[type] = response.data.totalItems;
         } catch (error) {
           console.error("Failed to fetch total items for tab:", type, error);
+        }
+      }
+      this.setInitialTab();
+    },
+    setInitialTab() {
+      for (let type of Object.values(this.tabs)) {
+        if (!this.isTabDisabled(type)) {
+          this.changeTab(type);
+          break;
         }
       }
     },
