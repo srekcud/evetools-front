@@ -93,7 +93,7 @@ export default {
     },
     async fetchProjects(page = 1) {
       try {
-        const response = await axios.get(`http://evetools.local/api/projects?page=${page}`);
+        const response = await axios.get(`https://evetools.local/api/projects?page=${page}`);
         this.projects = response.data.member.map((project) => {
           const participants = project.json ? project.json.participants : [];
           return {

@@ -16,12 +16,12 @@
       <table class="details-table">
         <thead class="fixed-header">
         <tr>
-          <th v-for="(header, index) in headers" :key="index">{{ header }}</th>
+          <th v-for="header in headers" :key="header">{{ header }}</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="(detail, index) in details" :key="index">
-          <td v-for="(value, valueIndex) in detail" :key="valueIndex">{{ value }}</td>
+          <td v-for="header in headers" :key="header">{{ detail[header] || '' }}</td>
         </tr>
         </tbody>
       </table>
@@ -52,7 +52,7 @@ export default {
       },
       currentTab: null,
       details: [],
-      headers: [],
+      headers: ["name", "run", "cost", "character", "startDatetime", "endDatetime", "status"], // Columns to display
       totalItems: {},
     };
   },
@@ -64,7 +64,7 @@ export default {
       for (let type of Object.values(this.tabs)) {
         try {
           const response = await axios.get(
-              `http://evetools.local/api/projects/${this.project.ravworksId}/details/${type}`
+              `https://evetools.local/api/projects/${this.project.ravworksId}/details/${type}`
           );
           this.totalItems[type] = response.data.totalItems;
         } catch (error) {
@@ -91,12 +91,16 @@ export default {
     async fetchDetails(type) {
       try {
         const response = await axios.get(
-            `http://evetools.local/api/projects/${this.project.ravworksId}/details/${type}`
+            `https://evetools.local/api/projects/${this.project.ravworksId}/details/${type}`
         );
-        this.details = response.data.member;
-        if (this.details.length > 0) {
-          this.headers = Object.keys(this.details[0]);
-        }
+        this.details = response.data.member.map((item) => {
+          // Ensure only relevant columns are present, and fill missing values with ''
+          const filteredItem = {};
+          this.headers.forEach((header) => {
+            filteredItem[header] = item[header] || ""; // Default to empty string if value is missing
+          });
+          return filteredItem;
+        });
       } catch (error) {
         console.error("Failed to fetch project details:", error);
       }
