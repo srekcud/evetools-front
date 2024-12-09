@@ -12,7 +12,7 @@
         {{ tabName }}
       </button>
     </div>
-    <div v-if="details.length" class="table-container">
+    <div v-if="details.length" class="table-container" ref="tableContainer">
       <table class="details-table">
         <thead class="fixed-header">
         <tr>
@@ -20,7 +20,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(detail, index) in details" :key="index">
+        <tr
+            v-for="(detail, index) in details"
+            :key="index"
+            :class="getRowClass(detail.status)"
+        >
           <td v-for="header in headers" :key="header">{{ detail[header] || '' }}</td>
         </tr>
         </tbody>
@@ -86,6 +90,7 @@ export default {
     },
     changeTab(type) {
       this.currentTab = type;
+      this.resetScrollPosition();
       this.fetchDetails(type);
     },
     async fetchDetails(type) {
@@ -94,7 +99,6 @@ export default {
             `https://evetools.local/api/projects/${this.project.ravworksId}/details/${type}`
         );
         this.details = response.data.member.map((item) => {
-          // Ensure only relevant columns are present, and fill missing values with ''
           const filteredItem = {};
           this.headers.forEach((header) => {
             filteredItem[header] = item[header] || ""; // Default to empty string if value is missing
@@ -103,6 +107,24 @@ export default {
         });
       } catch (error) {
         console.error("Failed to fetch project details:", error);
+      }
+    },
+    resetScrollPosition() {
+      const container = this.$refs.tableContainer;
+      if (container) {
+        container.scrollTop = 0;
+      }
+    },
+    getRowClass(status) {
+      switch (status) {
+        case "not started":
+          return "text-not-started";
+        case "active":
+          return "text-active";
+        case "delivered":
+          return "text-delivered";
+        default:
+          return "";
       }
     },
   },
@@ -146,7 +168,8 @@ export default {
   color: #c2a611;
 }
 
-.details-table th, .details-table td {
+.details-table th,
+.details-table td {
   border: 1px solid #2c3e50;
   padding: 10px;
   text-align: center;
@@ -169,5 +192,18 @@ export default {
   color: #c2a611;
   font-size: 18px;
   margin-top: 20px;
+}
+
+/* Row text styles based on status */
+.text-not-started {
+  color: yellow;
+}
+
+.text-active {
+  color: green;
+}
+
+.text-delivered {
+  color: blue;
 }
 </style>
