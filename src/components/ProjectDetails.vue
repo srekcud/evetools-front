@@ -56,7 +56,7 @@ export default {
       },
       currentTab: null,
       details: [],
-      headers: ["name", "run", "cost", "character", "startDatetime", "endDatetime", "status"], // Columns to display
+      headers: ["status","run","name", "facility", "output","character", "startDatetime", "endDatetime","cost"], // Columns to display
       totalItems: {},
     };
   },
@@ -123,6 +123,8 @@ export default {
           return "text-active";
         case "delivered":
           return "text-delivered";
+        case "cancelled":
+          return "text-cancelled";
         default:
           return "";
       }
@@ -196,14 +198,18 @@ export default {
 
 /* Row text styles based on status */
 .text-not-started {
-  color: yellow;
+  color: #FFB347;
 }
 
 .text-active {
-  color: green;
+  color: #4CAF50;
 }
 
 .text-delivered {
-  color: blue;
+  color: #2196F3;
+}
+
+.text-cancelled {
+  color: #F44336;
 }
 </style>
